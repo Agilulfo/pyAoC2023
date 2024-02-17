@@ -1,4 +1,5 @@
-import shared
+from advent.day01 import shared
+
 word_map = {
     "one": "1",
     "two": "2",
@@ -19,11 +20,8 @@ def main ():
         print("the calibration_value is {0}".format(calibration_value))
 
 def replace_number_words(line):
-    print(line)
-
     for k, v in word_map.items():
         line = line.replace(k, v)
-    print(line)
     return line
 
 if __name__ == "__main__" :

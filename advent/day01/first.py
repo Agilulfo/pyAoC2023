@@ -1,4 +1,4 @@
-import shared
+from  advent.day01 import shared
 
 def main ():
     with open("./advent/day01/input") as input :
