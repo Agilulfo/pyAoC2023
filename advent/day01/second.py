@@ -19,10 +19,29 @@ def main ():
             calibration_value += shared.extract_number(replace_number_words(line))
         print("the calibration_value is {0}".format(calibration_value))
 
-def replace_number_words(line):
-    for k, v in word_map.items():
-        line = line.replace(k, v)
-    return line
+def replace_number_words(line, cursor=0):
+    if cursor == len(line):
+
+        return line
+    word = None
+    for number in word_map.keys():
+        if start_with(line[cursor:], number):
+            word = number
+            break
+
+    if word :
+        line = line.replace(word, word_map[word], 1)
+
+    return replace_number_words(line, cursor= cursor+1)
+
+
+
+def start_with(line, word):
+    line_len = len(line)
+    word_len = len(word)
+    if word_len > line_len : return False
+    return line[:word_len] == word
+
 
 if __name__ == "__main__" :
     main()
