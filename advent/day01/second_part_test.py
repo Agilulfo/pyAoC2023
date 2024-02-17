@@ -16,6 +16,10 @@ def test_many_words():
     )
 
 
+def test_special_word():
+    assert extract_number("2eightwo") == 22
+
+
 def test_example():
     example = [
         ("two1nine", 29),
@@ -28,9 +32,11 @@ def test_example():
     ]
 
     for word, number in example:
-        assert shared.extract_number(second.replace_number_words(word)) == number
+        assert extract_number(word) == number
 
-    assert False
+
+def extract_number(word):
+    return shared.extract_number(second.replace_number_words(word))
 
 
 def test_start_with():
