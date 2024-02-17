@@ -1,7 +1,7 @@
 import shared
 
 def main ():
-    with open("./advent/01/input") as input :
+    with open("./advent/day01/input") as input :
         calibration_value = 0
         for line in input:
             calibration_value += shared.extract_number(line)
