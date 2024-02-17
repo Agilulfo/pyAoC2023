@@ -1,23 +1,8 @@
 from advent.day01 import second
-from advent.day01 import shared
-
-
-def test_no_changes():
-    assert second.replace_number_words("asd1dsad") == "asd1dsad"
-
-
-def test_mixed_words():
-    assert second.replace_number_words("eightwo2") == "8wo2"
-
-
-def test_many_words():
-    assert (
-        second.replace_number_words("ninenineightwo2two3tasdaone") == "99igh2223tasda1"
-    )
 
 
 def test_special_word():
-    assert extract_number("2eightwo") == 22
+    assert second.extract_number("2eightwo") == 22
 
 
 def test_example():
@@ -32,13 +17,19 @@ def test_example():
     ]
 
     for word, number in example:
-        assert extract_number(word) == number
-
-
-def extract_number(word):
-    return shared.extract_number(second.replace_number_words(word))
+        assert second.extract_number(word) == number
 
 
 def test_start_with():
     assert second.start_with("ciao", "ciao")
     assert second.start_with("ciaosss", "ciao")
+
+
+def test_end_with():
+    assert second.end_with("ciao", "ciao")
+    assert second.end_with("ciaosss", "osss")
+    assert not second.end_with("sss", "osss")
+
+
+def test_first_number():
+    assert second.find_first_number("xtwo3") == 2
