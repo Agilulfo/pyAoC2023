@@ -1,6 +1,7 @@
 from advent.day01 import second
 from advent.day01 import shared
 
+
 def test_no_changes():
     assert second.replace_number_words("asd1dsad") == "asd1dsad"
 
@@ -8,8 +9,12 @@ def test_no_changes():
 def test_mixed_words():
     assert second.replace_number_words("eightwo2") == "8wo2"
 
+
 def test_many_words():
-    assert second.replace_number_words("ninenineightwo2two3tasdaone") == "99igh2223tasda1"
+    assert (
+        second.replace_number_words("ninenineightwo2two3tasdaone") == "99igh2223tasda1"
+    )
+
 
 def test_example():
     example = [
@@ -19,15 +24,11 @@ def test_example():
         ("xtwone3four", 24),
         ("4nineeightseven2", 42),
         ("zoneight234", 14),
-        ("7pqrstsixteen", 76)
+        ("7pqrstsixteen", 76),
     ]
 
     for word, number in example:
-        assert shared.extract_number(
-            second.replace_number_words(
-                word
-            )
-        ) == number
+        assert shared.extract_number(second.replace_number_words(word)) == number
 
     assert False
 

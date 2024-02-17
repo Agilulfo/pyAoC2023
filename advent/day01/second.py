@@ -9,19 +9,20 @@ word_map = {
     "six": "6",
     "seven": "7",
     "eight": "8",
-    "nine": "9"
+    "nine": "9",
 }
 
-def main ():
-    with open("./advent/day01/input") as input :
+
+def main():
+    with open("./advent/day01/input") as input:
         calibration_value = 0
         for line in input:
             calibration_value += shared.extract_number(replace_number_words(line))
         print("the calibration_value is {0}".format(calibration_value))
 
+
 def replace_number_words(line, cursor=0):
     if cursor == len(line):
-
         return line
     word = None
     for number in word_map.keys():
@@ -29,19 +30,19 @@ def replace_number_words(line, cursor=0):
             word = number
             break
 
-    if word :
+    if word:
         line = line.replace(word, word_map[word], 1)
 
-    return replace_number_words(line, cursor= cursor+1)
-
+    return replace_number_words(line, cursor=cursor + 1)
 
 
 def start_with(line, word):
     line_len = len(line)
     word_len = len(word)
-    if word_len > line_len : return False
+    if word_len > line_len:
+        return False
     return line[:word_len] == word
 
 
-if __name__ == "__main__" :
+if __name__ == "__main__":
     main()

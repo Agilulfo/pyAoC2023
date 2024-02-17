@@ -1,13 +1,14 @@
 def extract_number(line):
     first = None
-    last  = None
+    last = None
     for char in line:
         if str.isdigit(char):
-            if first :
+            if first:
                 last = char
-            else :
+            else:
                 first = char
     return join_digits(first, last)
+
 
 def join_digits(first, last):
     if last:
