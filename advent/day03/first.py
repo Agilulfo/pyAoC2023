@@ -16,15 +16,14 @@ def main():
 def adjacent_submap(full_map, row, start, end):
     submap = []
 
-    (start_row, start_column, end_row, end_column) = shared.adjacent_indexes(full_map, row, start, end)
+    (start_row, start_column, end_row, end_column) = shared.adjacent_indexes(
+        full_map, row, start, end
+    )
 
     for row_index in range(start_row, end_row + 1):
         submap.append(full_map[row_index][start_column : end_column + 1])
 
     return submap
-
-
-
 
 
 def submap_has_symbol(submap):

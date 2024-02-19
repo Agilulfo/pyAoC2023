@@ -37,6 +37,7 @@ def extract_numbers(map):
 
     return numbers
 
+
 def adjacent_indexes(full_map, row, start, end):
     max_row = len(full_map) - 1
     max_column = len(full_map[0]) - 1
