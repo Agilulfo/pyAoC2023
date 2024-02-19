@@ -5,44 +5,12 @@ def main():
     map = shared.load_map(__file__)
     result = 0
 
-    for number, row, start, end in extract_numbers(map):
+    for number, row, start, end in shared.extract_numbers(map):
         submap = adjacent_submap(map, row, start, end)
         if submap_has_symbol(submap):
             result += number
 
     print("the result is: ", result)
-
-
-def extract_numbers(map):
-    numbers = []
-
-    buffer = None
-    start = None
-
-    for row_index in range(len(map)):
-        line_lenght = len(map[row_index])
-        for column_index in range(line_lenght):
-            char = map[row_index][column_index]
-            last_char = column_index == line_lenght - 1
-            if char.isdigit():
-                if buffer:
-                    buffer += char
-                else:
-                    start = column_index
-                    buffer = char
-
-                if last_char:
-                    numbers.append((int(buffer), row_index, start, column_index))
-                    start = None
-                    buffer = None
-
-            else:
-                if buffer:
-                    numbers.append((int(buffer), row_index, start, column_index - 1))
-                    start = None
-                    buffer = None
-
-    return numbers
 
 
 def adjacent_submap(full_map, row, start, end):
