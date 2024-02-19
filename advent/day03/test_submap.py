@@ -1,5 +1,6 @@
 from advent.day03 import first
 
+
 def test_adjacent_submap():
     full_map = [
         "...........",
@@ -18,6 +19,7 @@ def test_adjacent_submap():
         "YYYY",
     ]
 
+
 def test_adjacent_submap_corner_top_left():
     full_map = [
         "XXY........",
@@ -30,10 +32,8 @@ def test_adjacent_submap_corner_top_left():
 
     submap = first.adjacent_submap(full_map, 0, 0, 1)
 
-    assert submap == [
-        "XXY",
-        "YYY"
-    ]
+    assert submap == ["XXY", "YYY"]
+
 
 def test_adjacent_submap_corner_bottom_right():
     full_map = [
@@ -47,7 +47,4 @@ def test_adjacent_submap_corner_bottom_right():
 
     submap = first.adjacent_submap(full_map, 5, 9, 10)
 
-    assert submap == [
-        "YYY",
-        "YXX"
-    ]
+    assert submap == ["YYY", "YXX"]

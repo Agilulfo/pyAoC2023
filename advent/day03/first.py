@@ -1,7 +1,8 @@
-from advent import utils
+from advent.day03 import shared
+
 
 def main():
-    map = load_map(utils.input_path(__file__))
+    map = shared.load_map(__file__)
     result = 0
 
     for number, row, start, end in extract_numbers(map):
@@ -12,17 +13,13 @@ def main():
     print("the result is: ", result)
 
 
-def load_map(file_path):
-    with open(utils.input_path(__file__)) as input:
-         return input.read().splitlines()
-
 def extract_numbers(map):
     numbers = []
 
     buffer = None
     start = None
 
-    for row_index  in range(len(map)):
+    for row_index in range(len(map)):
         line_lenght = len(map[row_index])
         for column_index in range(line_lenght):
             char = map[row_index][column_index]
@@ -47,21 +44,23 @@ def extract_numbers(map):
 
     return numbers
 
+
 def adjacent_submap(full_map, row, start, end):
     max_row = len(full_map) - 1
     max_column = len(full_map[0]) - 1
 
     submap = []
 
-    start_row = max( 0 , row - 1)
-    start_column = max(0 , start - 1)
-    end_row = min ( max_row, row + 1)
-    end_column = min( end + 1, max_column )
+    start_row = max(0, row - 1)
+    start_column = max(0, start - 1)
+    end_row = min(max_row, row + 1)
+    end_column = min(end + 1, max_column)
 
     for row_index in range(start_row, end_row + 1):
-        submap.append(full_map[row_index][start_column:end_column + 1])
+        submap.append(full_map[row_index][start_column : end_column + 1])
 
     return submap
+
 
 def submap_has_symbol(submap):
     for row in submap:
