@@ -2,11 +2,19 @@ from advent import utils
 
 def main():
     map = load_map(utils.input_path(__file__))
+    result = 0
+
+    for number, row, start, end in extract_numbers(map):
+        submap = adjacent_submap(map, row, start, end)
+        if submap_has_symbol(submap):
+            result += number
+
+    print("the result is: ", result)
 
 
 def load_map(file_path):
     with open(utils.input_path(__file__)) as input:
-         return input.readlines()
+         return input.read().splitlines()
 
 def extract_numbers(map):
     numbers = []
@@ -54,3 +62,10 @@ def adjacent_submap(full_map, row, start, end):
         submap.append(full_map[row_index][start_column:end_column + 1])
 
     return submap
+
+def submap_has_symbol(submap):
+    for row in submap:
+        for char in row:
+            if not char.isdigit() and char != ".":
+                return True
+    return False
