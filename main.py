@@ -1,2 +1,2 @@
-from advent.day02 import first
-first.main()
+from advent.day02 import second
+second.main()

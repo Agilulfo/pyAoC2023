@@ -16,10 +16,8 @@ def decode(line):
                 red = int(amount)
             elif color == "green":
                 green = int(amount)
-            else :
+            else:
                 blue = int(amount)
-        decoded_rounds.append(
-            (red, green, blue)
-        )
+        decoded_rounds.append((red, green, blue))
 
     return (game_number, decoded_rounds)
