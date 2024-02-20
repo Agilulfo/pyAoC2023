@@ -30,6 +30,7 @@ def sequence_to_list(sequence):
 def extract_card_index(index):
     return int(index[4:])
 
+
 def count_matches(card):
     _, winning, guessed = card
     guessed = set(guessed)
