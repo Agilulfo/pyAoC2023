@@ -3,16 +3,16 @@ from advent import utils
 
 def parse_input():
     path = utils.input_path(__file__)
-    games = []
+    cards = []
     with open(path) as input:
         for line in input:
             index, data = line[:-1].split(":")
-            game_index = extract_game_index(index)
+            card_index = extract_card_index(index)
             winning_numbers, guessed_numbers = data.split("|")
             winning_numbers = sequence_to_list(winning_numbers)
             guessed_numbers = sequence_to_list(guessed_numbers)
-            games.append((game_index, winning_numbers, guessed_numbers))
-    return games
+            cards.append((card_index, winning_numbers, guessed_numbers))
+    return cards
 
 
 def sequence_to_list(sequence):
@@ -21,11 +21,11 @@ def sequence_to_list(sequence):
     for item in sequence.split(" "):
         try:
             numbers.append(int(item))
-        except:
+        except ValueError:
             pass
 
     return numbers
 
 
-def extract_game_index(index):
+def extract_card_index(index):
     return int(index[4:])
