@@ -9,8 +9,8 @@ def test_rule_lt():
     assert rule_a < 9
 
 
-def test_botanic_map():
-    map = shared.BotanicMap("seed-to-soil", [[50, 98, 2], [52, 50, 48]])
+def test_map():
+    map = shared.Map("seed-to-soil", [[50, 98, 2], [52, 50, 48]])
     assert map.convert(50) == 52
     assert map.convert(97) == 99
     assert map.convert(98) == 50

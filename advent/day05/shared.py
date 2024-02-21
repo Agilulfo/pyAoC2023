@@ -22,7 +22,7 @@ def find_lowest_location(seeds, maps):
 
 
 def init_maps(input):
-    return [BotanicMap(map_type, input[map_type]) for map_type in MAP_SEQUENCE]
+    return [Map(map_type, input[map_type]) for map_type in MAP_SEQUENCE]
 
 
 def parse_input():
@@ -106,7 +106,7 @@ class RuleNotApplicable(Exception):
     pass
 
 
-class BotanicMap:
+class Map:
     def id(self):
         return self.id
 
