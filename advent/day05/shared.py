@@ -61,7 +61,7 @@ def extract_map(input_file):
 def apply_all_maps(value, map_list, index=0):
     if index == len(map_list):
         return value
-    return apply_all_maps(map_list[index].convert(value), map_list, index=index + 1)
+    return apply_all_maps(map_list[index].convert_id(value), map_list, index=index + 1)
 
 
 class Rule:
@@ -72,9 +72,18 @@ class Rule:
         self.range.item = self
 
     def apply(self, value):
-        if not self.range.includes(value):
+        if isinstance(value, int):
+            return self.__apply_id(value)
+        else:
+            return self.__apply_range(value)
+
+    def __apply_id(self, id):
+        if not self.range.includes(id):
             raise RuleNotApplicable()
-        return value + self.delta
+        return id + self.delta
+
+    def __apply_range(self, range):
+        return range.shift(self.delta)
 
 
 class RuleNotApplicable(Exception):
@@ -89,22 +98,35 @@ class Map:
         self.id = name
         self.ranges = sorted([Rule(rule).range for rule in rules])
 
-    def convert(self, id):
-        rule = self.pick_rule(id)
+    def convert_id(self, id):
+        rule = self.pick_rule_for_id(id)
         if rule:
             return rule.apply(id)
         else:
             return id
 
-    def pick_rule(self, id):
+    # def convert_range(self, range):
+    #     rules = pick_rules_for_range(self, range)
+    #     ranges = [rule.range for rule in rules]
+    #     new_ranges = [range.split_with_ranges(ranges)]
+    #     converted_ranges = []
+    #     for range, rule in new_ranges:
+    #         if rule:
+    #             rule.apply(range)
+    #         converted_ranges.append(range)
+
+    def pick_rule_for_id(self, id):
         index = bisect.bisect(self.ranges, id)
         if index == 0:
             return None
         candidate = self.ranges[index - 1].item
         if candidate.range.includes(id):
             return candidate
-        else :
+        else:
             return None
+
+    def pick_rules_for_range(self, range):
+        raise NotImplementedError
 
 
 class Range:
@@ -125,6 +147,50 @@ class Range:
 
     def shift(self, delta):
         self.start += delta
+
+    def in_between(range_a, range_b):
+        if range_b.start - range_a.end() <= 1:
+            return None
+        start = range_a.end() + 1
+        end = range_b.start - 1
+        size = Range.size_from_ends(start, end)
+        return Range(start, size)
+
+    def size_from_ends(start, end):
+        return end - start + 1
+
+    def split_with_ranges(self, ranges):
+        ranges = sorted([range for range in ranges if self.collides(range)])
+
+        if not ranges:
+            return [(Range(self.start, self.size), None)]
+
+        new_ranges = []
+
+        previous_range = Range(self.start - 1, 1)
+
+        for range in ranges:
+            new_range = self.intersection(range)
+            gap_range = Range.in_between(previous_range, new_range)
+            if gap_range:
+                new_ranges.append((gap_range, None))
+            new_ranges.append((new_range, range))
+            previous_range = new_range
+
+        last_gap = Range.in_between(previous_range, Range(self.end() + 1, 1))
+        if last_gap:
+            new_ranges.append((last_gap, None))
+
+        return new_ranges
+
+    def collides(self, range):
+        return self.includes(range.start) or self.includes(range.end())
+
+    def intersection(self, other):
+        start = max(self.start, other.start)
+        end = min(self.end(), other.end())
+        size = Range.size_from_ends(start, end)
+        return Range(start, size)
 
     def __lt__(self, other):
         if isinstance(other, int):
@@ -149,3 +215,6 @@ class Range:
             return self.start == other.start and self.end() == other.end()
         else:
             return NotImplemented
+
+    def __repr__(self):
+        return "range " + str(self.start) + " " + str(self.end()) + " " + str(self.size)
