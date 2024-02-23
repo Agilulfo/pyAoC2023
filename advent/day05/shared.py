@@ -85,6 +85,11 @@ class Rule:
     def __apply_range(self, range):
         return range.shift(self.delta)
 
+    def __repr__(self):
+        start = self.range.start
+        end = self.range.end()
+        return f"rule [{start}:{end}]->[{start+self.delta}:{end + self.delta}]"
+
 
 class RuleNotApplicable(Exception):
     pass
@@ -105,15 +110,16 @@ class Map:
         else:
             return id
 
-    # def convert_range(self, range):
-    #     rules = pick_rules_for_range(self, range)
-    #     ranges = [rule.range for rule in rules]
-    #     new_ranges = [range.split_with_ranges(ranges)]
-    #     converted_ranges = []
-    #     for range, rule in new_ranges:
-    #         if rule:
-    #             rule.apply(range)
-    #         converted_ranges.append(range)
+    def convert_range(self, range):
+        rules = self.pick_rules_for_range(range)
+        ranges = [rule.range for rule in rules]
+        new_ranges = range.split_with_ranges(ranges)
+        converted_ranges = []
+        for range, original_range in new_ranges:
+            if original_range:
+                original_range.item.apply(range)
+            converted_ranges.append(range)
+        return converted_ranges
 
     def pick_rule_for_id(self, id):
         index = bisect.bisect(self.ranges, id)
@@ -126,7 +132,15 @@ class Map:
             return None
 
     def pick_rules_for_range(self, range):
-        raise NotImplementedError
+        start_index = bisect.bisect(self.ranges, range.start)
+        end_index = bisect.bisect(self.ranges, range.end())
+
+        ranges = self.ranges[max(start_index - 1, 0) : end_index]
+        return [range.item for range in ranges]
+
+    def __repr__(self):
+        rules = [range.item for range in self.ranges]
+        return f"Map: {self.id} - {rules}"
 
 
 class Range:
@@ -217,4 +231,4 @@ class Range:
             return NotImplemented
 
     def __repr__(self):
-        return "range " + str(self.start) + " " + str(self.end()) + " " + str(self.size)
+        return f"Range: [{str(self.start)} ... {str(self.end())}] (size: { str(self.size)})"
