@@ -31,7 +31,8 @@ def find_lowest_location_with_ranges(ranges, maps):
 
 
 def apply_ranges(input_ranges, maps):
-    if not maps: return input_ranges
+    if not maps:
+        return input_ranges
     return apply_ranges(maps[0].convert_ranges(input_ranges), maps[1:])
 
 
@@ -125,13 +126,10 @@ class Map:
             return id
 
     def convert_ranges(self, ranges):
-        print(self.id)
-        print(f"input_ranges = {len(ranges)}")
         new_ranges = []
         for range in ranges:
             new_ranges.extend(self.convert_range(range))
 
-        print(f"output_ranges = {len(new_ranges)}")
         return new_ranges
 
     def convert_range(self, range):
@@ -221,8 +219,13 @@ class Range:
 
         return new_ranges
 
-    def collides(self, range):
-        return self.includes(range.start) or self.includes(range.end())
+    def collides(self, other):
+        return (
+            self.includes(other.start)
+            or self.includes(other.end())
+            or other.includes(self.start)
+            or other.includes(self.end)
+        )
 
     def intersection(self, other):
         start = max(self.start, other.start)
