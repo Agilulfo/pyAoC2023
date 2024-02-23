@@ -21,6 +21,20 @@ def find_lowest_location(seeds, maps):
     return min_location
 
 
+def find_lowest_location_with_ranges(ranges, maps):
+    ranges = apply_ranges(ranges, maps)
+    min = ranges[0].start
+    for range in ranges:
+        if range.start < min:
+            min = range.start
+    return min
+
+
+def apply_ranges(input_ranges, maps):
+    if not maps: return input_ranges
+    return apply_ranges(maps[0].convert_ranges(input_ranges), maps[1:])
+
+
 def init_maps(input):
     return [Map(map_type, input[map_type]) for map_type in MAP_SEQUENCE]
 
@@ -109,6 +123,16 @@ class Map:
             return rule.apply(id)
         else:
             return id
+
+    def convert_ranges(self, ranges):
+        print(self.id)
+        print(f"input_ranges = {len(ranges)}")
+        new_ranges = []
+        for range in ranges:
+            new_ranges.extend(self.convert_range(range))
+
+        print(f"output_ranges = {len(new_ranges)}")
+        return new_ranges
 
     def convert_range(self, range):
         rules = self.pick_rules_for_range(range)
