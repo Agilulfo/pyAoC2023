@@ -29,8 +29,9 @@ def card_value(card, mapping):
 
 
 class Scoring:
-    def __init__(self, mapping):
+    def __init__(self, mapping, preprocessing=None):
         self.mapping = mapping
+        self.preprocessing = preprocessing
 
     def value(self, hand):
         value = ""
@@ -40,12 +41,9 @@ class Scoring:
         return int(value, base=14)
 
     def type(self, hand):
-        counter = {}
-        for card in hand:
-            if card in counter:
-                counter[card] += 1
-            else:
-                counter[card] = 1
+        if self.preprocessing:
+            hand = self.preprocessing(hand)
+        counter = Scoring.count_occurrences(hand)
 
         occurrences = sorted([v for v in counter.values()], reverse=True)
 
@@ -64,3 +62,12 @@ class Scoring:
                 return 2
             case _:
                 return 1
+
+    def count_occurrences(hand):
+        counter = {}
+        for card in hand:
+            if card in counter:
+                counter[card] += 1
+            else:
+                counter[card] = 1
+        return counter
