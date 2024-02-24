@@ -2,11 +2,15 @@ from advent import utils
 
 
 def main():
+    print(f"total_winning is: {calculate_total_winning(Scoring)}")
+
+
+def calculate_total_winning(scoring):
     with open(utils.input_path(__file__)) as input:
         hands = []
         for line in input:
             parts = line.split(" ")
-            hands.append(Hand(parts[0], int(parts[-1])))
+            hands.append(Hand(parts[0], int(parts[-1]), Scoring))
 
         hands = sorted(
             hands,
@@ -15,15 +19,15 @@ def main():
         for rank, hand in enumerate(hands):
             total_winning += hand.calculate_value(rank + 1)
 
-        print(f"total_winning is: {total_winning}")
+        return total_winning
 
 
 class Hand:
-    def __init__(self, hand, bid):
+    def __init__(self, hand, bid, scoring):
         self.hand = hand
         self.bid = bid
-        self.value = Scoring.value(hand)
-        self.type = Scoring.type(hand)
+        self.value = scoring.value(hand)
+        self.type = scoring.type(hand)
 
     def calculate_value(self, rank):
         return rank * self.bid
