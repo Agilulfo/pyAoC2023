@@ -22,8 +22,8 @@ class Hand:
     def __init__(self, hand, bid):
         self.hand = hand
         self.bid = bid
-        self.value = Hand.__int_value(hand)
-        self.type = Hand.__type(hand)
+        self.value = Scoring.value(hand)
+        self.type = Scoring.type(hand)
 
     def calculate_value(self, rank):
         return rank * self.bid
@@ -42,7 +42,9 @@ class Hand:
     def __repr__(self):
         return f"Hand: {self.hand} - {self.type} - {self.value}"
 
-    def __int_value(hand):
+
+class Scoring:
+    def value(hand):
         value = ""
         for card in hand:
             base_14 = ""
@@ -76,7 +78,7 @@ class Hand:
             value += base_14
         return int(value, base=14)
 
-    def __type(hand):
+    def type(hand):
         counter = {}
         for card in hand:
             if card in counter:
