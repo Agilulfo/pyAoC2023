@@ -10,7 +10,6 @@ def main():
     print(f"margin is: {total_margin}")
 
 
-
 def parse_input():
     with open(utils.input_path(__file__)) as input:
         lines = input.readlines()
