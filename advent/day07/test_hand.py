@@ -1,4 +1,5 @@
-from advent.day07.first import Hand, Scoring
+from advent.day07.first import Scoring
+from advent.day07.shared import Hand
 
 
 def test_value():
