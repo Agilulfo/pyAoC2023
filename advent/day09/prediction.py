@@ -34,7 +34,11 @@ def predict_forward(delta_analisys):
 
 
 def predict_backward(delta_analisys):
-    raise NotImplementedError
+    next = 0
+    for index in range(len(delta_analisys) - 2, -1, -1):
+        next = delta_analisys[index][0] - next
+    return next
+
 
 
 def all_zeros(values):
