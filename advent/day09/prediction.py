@@ -40,7 +40,6 @@ def predict_backward(delta_analisys):
     return next
 
 
-
 def all_zeros(values):
     for value in values:
         if value != 0:
