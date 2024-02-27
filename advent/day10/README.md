@@ -66,3 +66,40 @@ I'm assuming that there no cases where dead ends start from S
 
 ```
 in such cases you will have to visit each direction to ensure it is not a deadend
+
+# Brainstorming (part 2)
+
+oh wow! this looks to be one of the hardest "part 2" so far!
+
+there are few problems to solve.
+
+1. figure out which side of the pipe loop is the inside  and which is the outside
+2. follow the pipeline and identify points touching the pipeline that are inside the loop
+3. "color" the gap inside the loop extending to points not touching the loop
+4. include in the area to color also the points that are occupied by broken pieces
+
+## inside/outside identification
+
+once identified the loop you can count how many times you go left and how many you go right
+e.g. every time you turn right increment a counter and every time you go left decrease the counter
+if at the end of the loop the counter is positive you are followihg the loop in a clockwise direction
+if at the end of the loop the coutner is negative you are following the loop in a counterclockwise direction
+
+in the first case the inside is on your right, in the second it is on your left.
+
+## exclusion of random pipes
+we need to be able to identify pipe pieces that are not part of the pipeline and that can be accounted as part othe field.
+
+two options come to mind.
+keep a database (pyhon set) of the pieces part of the pipeline and then scan the map to remove the ones that are not part ofit
+
+for each piece found in a field, follow the partial pipe it is part of to make sure it is not part of a loop and remove all of them,
+a loop might be inside our loop so you could check that none of the pieces in that loop are not connected to our loop (the database solution overall looks to be more efficient)
+
+## coloring algorithm
+
+once you identify a location that is part of an inside field how do you make sure each point in that patch is "coloured" (counted as part of our intereste area)?
+
+one option could be to start creating a database of that field and recursivelly explore in all 4 directions making sure not to come back to points that have already been discovered .
+
+there might be a more efficient option: eg. going first left, then down and again right etc.. but the algorithm should take into account possibly complicated shapes of the patches.
