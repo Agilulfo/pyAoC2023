@@ -19,18 +19,18 @@ CONTINUE = {
     "L": {"D": "R", "L": "U"},
 }
 
-def follow_loop(map, start, direction):
-    cursor = start
-    value = None
 
-    counter = 0
+def follow_loop(map, start, direction, aggregator):
+    cursor = start
+    value = "S"
+
     while True:
-        counter += 1
-        cursor, value = go(map, cursor, direction)
-        if value == "S":
+        new_cursor, new_value = go(map, cursor, direction)
+        aggregator.collect(new_cursor, new_value, cursor, value, direction)
+        if new_value == "S":
             break
+        cursor, value = new_cursor, new_value
         direction = CONTINUE[value][direction]
-    return counter
 
 
 def find_start(map):
@@ -65,11 +65,24 @@ class OutOfMapError(Exception):
     pass
 
 
-def explore_loop(map, start):
+def explore_loop(map, start, aggregator):
     for direction in ["R", "D", "L", "U"]:
         try:
             position, value = go(map, start, direction)
             if value in ENDS.keys() and OPPOSITE[direction] in ENDS[value]:
-                return follow_loop(map, start, direction)
+                return follow_loop(map, start, direction, aggregator)
         except OutOfMapError:
             pass
+
+
+class Aggregator:
+    def collect(self, new_cursor, new_value, old_cursor, old_value, direction):
+        NotImplementedError
+
+
+class StepCounter(Aggregator):
+    def __init__(self):
+        self.counter = 0
+
+    def collect(self, new_cursor, new_value, old_cursor, old_value, direction):
+        self.counter += 1
