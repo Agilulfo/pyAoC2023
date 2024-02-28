@@ -4,21 +4,24 @@ from advent.day10.shared import find_start, explore_loop, Aggregator, go
 def main():
     map = load_map()
     map = [list(line) for line in map]
+    print_map(map)
+    print()
     start = find_start(map)
+
     first = FirstPass()
     explore_loop(map, start, first)
-
-
 
     second = SecondPass(first.pipe_set, first.visited_clockwise(), map)
     explore_loop(map, start, second)
 
     first.color_map(map)
+    print_map(map)
+    print()
+    color_gaps(first.pipe_set, second.enclosed_locations, map)
     second.color_map(map)
     print_map(map)
 
-    # import pprint
-    # pprint.pprint(second.enclosed_locations)
+    print(len(second.enclosed_locations))
 
 CLOCKWISE_INCREMENT = {
     "-": {"R": 0, "L": 0},
@@ -29,6 +32,14 @@ CLOCKWISE_INCREMENT = {
     "J": {"D": 1, "R": -1},
     "L": {"D": -1, "L": 1}
 }
+
+def color_gaps(pipes, inside, map):
+    for location in list(inside):
+        next, _value = go(map, location, "R")
+        while next not in inside and next not in pipes:
+            inside.add(next)
+            next, _value= go(map, next, "R")
+
 
 class FirstPass(Aggregator):
     def __init__(self):
