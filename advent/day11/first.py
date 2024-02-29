@@ -20,12 +20,16 @@ def discover_galaxies(universe):
     return galaxies
 
 
-def distances(galaxies, expanding_rows, expanding_galaxies):
+def distances(galaxies, expanding_rows, expanding_galaxies, expansion_multiplier=1):
     total_distance = 0
     for index, galaxy in enumerate(galaxies):
         for destination_galaxy in galaxies[index + 1 :]:
             total_distance += distance(
-                galaxy, destination_galaxy, expanding_rows, expanding_galaxies
+                galaxy,
+                destination_galaxy,
+                expanding_rows,
+                expanding_galaxies,
+                expansion_multiplier,
             )
     return total_distance
 
@@ -54,11 +58,17 @@ def find_expansions(universe):
 # 4
 
 
-def distance(galaxy_a, galaxy_b, expanding_rows, expanding_columns):
+def distance(
+    galaxy_a, galaxy_b, expanding_rows, expanding_columns, expansion_multiplier
+):
     expansions = expansions_between(
         galaxy_a, galaxy_b, expanding_rows, expanding_columns
     )
-    return abs(galaxy_a[0] - galaxy_b[0]) + abs(galaxy_a[1] - galaxy_b[1]) + expansions
+    return (
+        abs(galaxy_a[0] - galaxy_b[0])
+        + abs(galaxy_a[1] - galaxy_b[1])
+        + expansions * expansion_multiplier
+    )
 
 
 def expansions_between(galaxy_a, galaxy_b, expanding_rows, expanding_columns):
