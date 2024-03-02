@@ -1,5 +1,6 @@
 import argparse
 import importlib
+import logging
 
 DAYS = 25
 PARTS = 2
@@ -14,4 +15,7 @@ day = "%02d"%arguments.day
 part = "first" if arguments.part == 1 else "second"
 
 module = importlib.import_module("advent.day%s.%s"%(day, part))
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 module.main()
