@@ -1,4 +1,4 @@
-import pprint
+import logging
 
 
 class ConditionRecord:
@@ -38,7 +38,7 @@ class ConditionRecord:
         if shortest_sequence(self.verification_format) == len(self.damaged_record):
             self.damaged_record = ""
             self.verification_format = []
-            pprint.pprint(self)
+            logging.debug(f"Apply fix_range: {self}")
             return True
         return False
 
@@ -51,7 +51,7 @@ class ConditionRecord:
         ):
             self.damaged_record = self.damaged_record[first_seq_len + 1 :]
             self.verification_format = self.verification_format[1:]
-            pprint.pprint(self)
+            logging.debug(f"Apply fix_beginning: {self}")
             return True
         return False
 
@@ -64,7 +64,7 @@ class ConditionRecord:
         ):
             self.damaged_record = self.damaged_record[: -(last_seq_len + 1)]
             self.verification_format = self.verification_format[:-1]
-            pprint.pprint(self)
+            logging.debug(f"Apply fix_end: {self}")
             return True
         return False
 
@@ -79,7 +79,7 @@ class ConditionRecord:
             if index is not None:
                 self.damaged_record = self.damaged_record[index + 1 :]
                 chopped = True
-                pprint.pprint(self)
+                logging.debug(f"Apply chopping front: {self}")
             else:
                 break
 
@@ -88,7 +88,7 @@ class ConditionRecord:
             if index is not None:
                 self.damaged_record = self.damaged_record[:index]
                 chopped = True
-                pprint.pprint(self)
+                logging.debug(f"Apply chopping back: {self}")
             else:
                 break
         return chopped
