@@ -7,7 +7,6 @@ class ConditionRecord:
         self.verification_format = verification_format
 
     def __repr__(self):
-
         return f"{self.damaged_record} <- {self.verification_format}"
 
     def count_arrangements(self):
@@ -88,6 +87,7 @@ class ConditionRecord:
             else:
                 break
         return chopped
+
 
 def find_last_dot(sentence, first_len):
     for index in range(first_len - 1, -1, -1):
