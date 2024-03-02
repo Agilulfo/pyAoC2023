@@ -10,14 +10,19 @@ class ConditionRecord:
         return f"{self.damaged_record} <- {self.verification_format}"
 
     def count_arrangements(self):
-        pprint.pprint(self)
         self.reduce()
-        if self.done():
-            return 1
-        else:
-            raise NotImplementedError
+        match len(self.verification_format):
+            case 0:
+                return 1
+            case _:
+                raise NotImplementedError
+
 
     def reduce(self):
+        """ Simplify current ConditionRecord
+
+        Removes obvious sections of the record that would not impact the overall count of arrangements
+        """
         functions = [self.chop, self.fix_range, self.fix_beginning, self.fix_end]
         while True:
             changed = False
