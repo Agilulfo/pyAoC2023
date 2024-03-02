@@ -8,7 +8,7 @@ def test_count_arrangements_full_match():
 
 def test_count_arrangements_complex():
     r = ConditionRecord("??.??.#??..#???#?#...", [3, 5, 1])
-    assert r.count_arrangements() == 2
+    assert r.count_arrangements() == 1
 
 
 def test_count_arrangements_1():
