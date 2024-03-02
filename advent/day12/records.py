@@ -59,8 +59,8 @@ class ConditionRecord:
     def fix_end(self):
         last_seq_len = self.verification_format[-1]
         if self.damaged_record[-1] == "#" or (
-            self.damaged_record[: -(last_seq_len + 1)]
-            and self.damaged_records[-last_seq_len]
+            "#" in self.damaged_record[-(last_seq_len): ]
+            and self.damaged_record[-last_seq_len -1] == "."
         ):
             self.damaged_record = self.damaged_record[: -(last_seq_len + 1)]
             self.verification_format = self.verification_format[:-1]
