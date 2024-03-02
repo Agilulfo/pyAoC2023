@@ -88,3 +88,8 @@ def test_chop_complex_end():
     r = ConditionRecord("#??..#???#?#...", [3, 5, 1])
     r.chop()
     assert r.damaged_record == "#??..#???#?#"
+
+def test_remove_dots():
+    r = ConditionRecord("....?????.....", [1])
+    assert r.remove_dots()
+    assert r.damaged_record == "?????"

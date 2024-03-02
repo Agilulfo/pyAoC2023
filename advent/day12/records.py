@@ -23,7 +23,7 @@ class ConditionRecord:
 
         Removes obvious sections of the record that would not impact the overall count of arrangements
         """
-        functions = [self.chop, self.fix_range, self.fix_beginning, self.fix_end]
+        functions = [self.chop, self.fix_range, self.fix_beginning, self.fix_end, self.remove_dots]
         while True:
             changed = False
             for function in functions:
@@ -67,6 +67,24 @@ class ConditionRecord:
             logging.debug(f"Apply fix_end: {self}")
             return True
         return False
+
+    def remove_dots(self):
+        previous_len = len(self.damaged_record)
+
+        for index, value in enumerate(self.damaged_record):
+            if value != ".":
+                self.damaged_record = self.damaged_record[index:]
+                logging.debug(f"Apply remove_dots: {self}")
+                break
+
+
+        for index in range(len(self.damaged_record) -1, -1, -1):
+            if self.damaged_record[index] != ".":
+                self.damaged_record = self.damaged_record[:index+1]
+                logging.debug(f"Apply remove_dots: {self}")
+                break
+
+        return previous_len != len(self.damaged_record)
 
     def done(self):
         return len(self.verification_format) == 0
