@@ -12,13 +12,21 @@ def main():
             counter += 100 * index
         else:
             counter += index
-
     print(f"the sum is: {counter}")
+
+
+def word(row_simmetry):
+    if row_simmetry:
+        return "row"
+    return "column"
 
 
 class Pattern:
     def __init__(self, pattern):
         self.pattern = pattern
+
+    def __repr__(self):
+        return "\n".join(self.pattern)
 
     def find_simmetry(self):
         simmetry_index = Pattern.row_simmetry(self.pattern)
@@ -39,12 +47,13 @@ class Pattern:
             if len(matches) != 2:
                 for first in range(len(matches)):
                     for second in range(first + 1, len(matches)):
-                        if not (first % 2 == 0 ^ second % 2 == 0):
+                        if Pattern.compatible_mirror_index(first, second):
                             dups.append([matches[first], matches[second]])
             else:
                 a, b = matches
-                minimum, maximum = min(a.index, b.index), max(a.index, b.index)
-                simmetry_candidates.append(minimum + (maximum - minimum) // 2)
+                if Pattern.compatible_mirror_index(a.index, b.index):
+                    minimum, maximum = min(a.index, b.index), max(a.index, b.index)
+                    simmetry_candidates.append(minimum + (maximum - minimum) // 2)
 
         counter = Counter(simmetry_candidates)
 
@@ -52,6 +61,9 @@ class Pattern:
             if Pattern.expected_line_matches(pattern, index) == matches:
                 return index + 1
         return None
+
+    def compatible_mirror_index(first, second):
+        return not (first % 2 == 0 ^ second % 2 == 0)
 
     def transpose(pattern):
         transposed = []

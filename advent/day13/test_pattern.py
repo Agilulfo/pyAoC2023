@@ -43,5 +43,23 @@ def test_symmetry_multiple_matches():
     assert pattern.find_simmetry() == (False, 4)
 
 
+def test_symmetry_not_gap_match():
+    pattern = Pattern(
+        [
+            "..#..####..#.",
+            "##.#.#..#.#..",
+            "...#..##..#..",
+            "##.#......#.#",
+            "###.##..##.##",
+            "...########..",
+            "..##..##..##.",
+            "##.###..###.#",
+            "..##..##..##.",
+        ]
+    )
+
+    assert pattern.find_simmetry() == (False, 1)
+
+
 def test_transpose():
     assert Pattern.transpose(["12", "34"]) == ["13", "24"]
