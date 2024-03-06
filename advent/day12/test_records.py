@@ -35,11 +35,13 @@ def test_fix_end_does_nothing():
     assert r.damaged_record == "?????.??"
     assert r.verification_format == [3]
 
+
 def test_fix_end_1():
     r = ConditionRecord("???#????#", [1, 3])
     r.fix_end()
     assert r.damaged_record == "???#?"
     assert r.verification_format == [1]
+
 
 def test_fix_end_2():
     r = ConditionRecord("???#?.#??", [1, 3])
@@ -88,6 +90,7 @@ def test_chop_complex_end():
     r = ConditionRecord("#??..#???#?#...", [3, 5, 1])
     r.chop()
     assert r.damaged_record == "#??..#???#?#"
+
 
 def test_remove_dots():
     r = ConditionRecord("....?????.....", [1])

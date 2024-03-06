@@ -17,13 +17,18 @@ class ConditionRecord:
             case _:
                 raise NotImplementedError
 
-
     def reduce(self):
-        """ Simplify current ConditionRecord
+        """Simplify current ConditionRecord
 
         Removes obvious sections of the record that would not impact the overall count of arrangements
         """
-        functions = [self.chop, self.fix_range, self.fix_beginning, self.fix_end, self.remove_dots]
+        functions = [
+            self.chop,
+            self.fix_range,
+            self.fix_beginning,
+            self.fix_end,
+            self.remove_dots,
+        ]
         while True:
             changed = False
             for function in functions:
@@ -59,8 +64,8 @@ class ConditionRecord:
     def fix_end(self):
         last_seq_len = self.verification_format[-1]
         if self.damaged_record[-1] == "#" or (
-            "#" in self.damaged_record[-(last_seq_len): ]
-            and self.damaged_record[-last_seq_len -1] == "."
+            "#" in self.damaged_record[-(last_seq_len):]
+            and self.damaged_record[-last_seq_len - 1] == "."
         ):
             self.damaged_record = self.damaged_record[: -(last_seq_len + 1)]
             self.verification_format = self.verification_format[:-1]
@@ -77,10 +82,9 @@ class ConditionRecord:
                 logging.debug(f"Apply remove_dots: {self}")
                 break
 
-
-        for index in range(len(self.damaged_record) -1, -1, -1):
+        for index in range(len(self.damaged_record) - 1, -1, -1):
             if self.damaged_record[index] != ".":
-                self.damaged_record = self.damaged_record[:index+1]
+                self.damaged_record = self.damaged_record[: index + 1]
                 logging.debug(f"Apply remove_dots: {self}")
                 break
 
