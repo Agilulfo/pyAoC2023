@@ -8,6 +8,7 @@ def main():
     counter = 0
     for pattern in patterns:
         row_simmetry, index = pattern.find_simmetry()
+        index += 1
         if row_simmetry:
             counter += 100 * index
         else:
@@ -67,7 +68,7 @@ class Pattern:
         # a valid amount of simmetric lines
         for index, matches in counter.most_common():
             if Pattern.expected_line_matches(pattern, index) == matches:
-                return index + 1
+                return index
         return None
 
     def compatible_mirror_index(first, second):
