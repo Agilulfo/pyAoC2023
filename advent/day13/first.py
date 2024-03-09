@@ -36,17 +36,22 @@ class Pattern:
             return False, Pattern.row_simmetry(Pattern.transpose(self.pattern))
 
     def row_simmetry(pattern):
+        # group lines by hash (equals)
         d = defaultdict(list)
         for index, line in enumerate(pattern):
             line = Line(index, line)
             d[line].append(line)
         dups = [dups for dups in d.values() if len(dups) > 1]
 
+        # groups matching lines by simmetry line
+        # collect in simmetry_candidates the simmetry index for each couple
         simmetry_candidates = []
         for matches in dups:
+            # handle case where more than one line are identical
             if len(matches) != 2:
                 for first in range(len(matches)):
                     for second in range(first + 1, len(matches)):
+                        # only handle valid simmetries
                         if Pattern.compatible_mirror_index(first, second):
                             dups.append([matches[first], matches[second]])
             else:
@@ -55,14 +60,21 @@ class Pattern:
                     minimum, maximum = min(a.index, b.index), max(a.index, b.index)
                     simmetry_candidates.append(minimum + (maximum - minimum) // 2)
 
+        # count how many lines share the same simmetry line
         counter = Counter(simmetry_candidates)
 
+        # return the first simmetry index that have
+        # a valid amount of simmetric lines
         for index, matches in counter.most_common():
             if Pattern.expected_line_matches(pattern, index) == matches:
                 return index + 1
         return None
 
     def compatible_mirror_index(first, second):
+        """Check if two index have a valid simmetry line
+
+        e.g. 0 and 2 do not produce a valid simmetry while 1 and 2 do
+        """
         return not (first % 2 == 0 ^ second % 2 == 0)
 
     def transpose(pattern):
