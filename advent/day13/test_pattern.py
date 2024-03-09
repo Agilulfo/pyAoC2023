@@ -1,4 +1,4 @@
-from advent.day13.first import Pattern
+from advent.day13.pattern import Pattern
 
 
 def test_simmetry():
