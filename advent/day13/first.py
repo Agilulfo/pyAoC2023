@@ -7,7 +7,8 @@ def main():
     patterns = [Pattern(pattern) for pattern in patterns]
     counter = 0
     for pattern in patterns:
-        row_simmetry, index = pattern.find_simmetry()
+        simmetries = pattern.find_simmetry()
+        row_simmetry, index = simmetries["valid"]
         index += 1
         if row_simmetry:
             counter += 100 * index
@@ -30,11 +31,21 @@ class Pattern:
         return "\n".join(self.pattern)
 
     def find_simmetry(self):
-        simmetry_index = Pattern.row_simmetry(self.pattern)
-        if simmetry_index is not None:
-            return True, simmetry_index
+        orizontal_simmetries = Pattern.row_simmetry(self.pattern)
+        vertical_simmetries = Pattern.row_simmetry(Pattern.transpose(self.pattern))
+        simmetries = {"valid": None, "partial": []}
+        if orizontal_simmetries["valid"] is not None:
+            simmetries["valid"] = (True, orizontal_simmetries["valid"])
         else:
-            return False, Pattern.row_simmetry(Pattern.transpose(self.pattern))
+            simmetries["valid"] = (False, vertical_simmetries["valid"])
+
+        for index in orizontal_simmetries["partial"]:
+            simmetries["partial"].append((True, index))
+
+        for index in vertical_simmetries["partial"]:
+            simmetries["partial"].append((False, index))
+
+        return simmetries
 
     def row_simmetry(pattern):
         # group lines by hash (equals)
@@ -66,10 +77,13 @@ class Pattern:
 
         # return the first simmetry index that have
         # a valid amount of simmetric lines
+        simmetries = {"valid": None, "partial": []}
         for index, matches in counter.most_common():
             if Pattern.expected_line_matches(pattern, index) == matches:
-                return index
-        return None
+                simmetries["valid"] = index
+            else:
+                simmetries["partial"].append(index)
+        return simmetries
 
     def compatible_mirror_index(first, second):
         """Check if two index have a valid simmetry line

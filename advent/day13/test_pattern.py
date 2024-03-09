@@ -20,7 +20,7 @@ def test_simmetry():
         ]
     )
 
-    assert pattern.find_simmetry() == (True, 3)
+    assert pattern.find_simmetry()["valid"] == (True, 2)
 
 
 def test_symmetry_multiple_matches():
@@ -40,10 +40,10 @@ def test_symmetry_multiple_matches():
         ]
     )
 
-    assert pattern.find_simmetry() == (False, 4)
+    assert pattern.find_simmetry()["valid"] == (False, 3)
 
 
-def test_symmetry_not_gap_match():
+def test_partial_simmetry():
     pattern = Pattern(
         [
             "..#..####..#.",
@@ -58,7 +58,10 @@ def test_symmetry_not_gap_match():
         ]
     )
 
-    assert pattern.find_simmetry() == (False, 1)
+    simmetries = pattern.find_simmetry()
+    print(simmetries)
+    assert simmetries["valid"] == (False, 0)
+    assert simmetries["partial"] == [(False, 6)]
 
 
 def test_transpose():
