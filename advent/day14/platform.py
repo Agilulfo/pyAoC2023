@@ -1,7 +1,9 @@
 from collections import defaultdict
 from bisect import bisect
+
 PLATFORM_SIZE = 100
 NUMBER_OF_CYCLES = 1000000000
+
 
 class Platform:
     def __init__(self, platform):
@@ -9,7 +11,12 @@ class Platform:
         for row_index, row in enumerate(platform):
             for columnd_index, shape in enumerate(row):
                 if shape != ".":
-                    stone = Stone(shape, PLATFORM_SIZE - row_index, PLATFORM_SIZE - columnd_index, self)
+                    stone = Stone(
+                        shape,
+                        PLATFORM_SIZE - row_index,
+                        PLATFORM_SIZE - columnd_index,
+                        self,
+                    )
                     self.stones.append(stone)
 
     def tilt(self, direction):
@@ -39,8 +46,21 @@ class Platform:
                         stone.roll("E", limit)
                         limit = stone.column_index
 
+    def spin_cycle(self):
+        for direction in ("N", "W", "S", "E"):
+            self.tilt(direction)
+
+    def spin(self, n):
+        for time in range(n):
+            print(f"spin: {time}")
+            self.spin_cycle()
+
     def get_weight(self):
         return sum([stone.get_weight() for stone in self.stones])
+
+    # CONTINUE: probably building the columns and rows
+    # each time from scratch is too requiring
+    # maybe I can keep stones sorted in a more efficient way
 
     def _build_columns(self):
         self.column_mode = True
@@ -54,14 +74,15 @@ class Platform:
         self.column_mode = False
         rows = defaultdict(list)
         for stone in self.stones:
-            row = rows[stone.column_index]
-            row.insert(bisect(column, stone), stone)
+            row = rows[stone.row_index]
+            row.insert(bisect(row, stone), stone)
         return rows.values()
+
 
 class Stone:
     def __init__(self, shape, row_index, column_index, platform):
         self.shape = shape
-        self.row_index=  row_index
+        self.row_index = row_index
         self.column_index = column_index
         self.platform = platform
 
@@ -80,7 +101,6 @@ class Stone:
                 case "E":
                     self.column_index = limit + 1
 
-
     def get_weight(self):
         match self.shape:
             case "#":
@@ -92,10 +112,10 @@ class Stone:
         if self.platform.column_mode:
             return self.row_index < other.row_index
         else:
-            return self.columnd_index < other.column_index
+            return self.column_index < other.column_index
 
     def __eq__(self, other):
         if self.platform.column_mode:
             return self.row_index == other.row_index
         else:
-            return self.columnd_index == other.column_index
+            return self.column_index == other.column_index
