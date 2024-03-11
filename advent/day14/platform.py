@@ -40,9 +40,15 @@ class Platform:
                         stone.roll("N", limit)
                         limit = stone.row_index
             case "W":
-                for row in self._build_rows():
-                    limit = PLATFORM_SIZE + 1
-                    for stone in reversed(row):
+                self.column_mode = False
+                groups = defaultdict(list)
+                for stone in self.rounded_stones:
+                    row = self.rows[stone.row_index - 1]
+                    stopper = row[bisect(row, stone)]
+                    groups[stopper].append(stone)
+                for stopper, stones in groups.items():
+                    limit = stopper.column_index
+                    for stone in stones:
                         stone.roll("W", limit)
                         limit = stone.column_index
             case "S":
@@ -58,9 +64,15 @@ class Platform:
                         stone.roll("S", limit)
                         limit = stone.row_index
             case "E":
-                for row in self._build_rows():
-                    limit = -1
-                    for stone in row:
+                self.column_mode = False
+                groups = defaultdict(list)
+                for stone in self.rounded_stones:
+                    row = self.rows[stone.row_index - 1]
+                    stopper = row[bisect(row, stone) - 1]  # ?
+                    groups[stopper].append(stone)
+                for stopper, stones in groups.items():
+                    limit = stopper.column_index
+                    for stone in stones:
                         stone.roll("E", limit)
                         limit = stone.column_index
 
@@ -83,20 +95,39 @@ class Platform:
             column = columns[stone.column_index - 1]
             column.insert(bisect(column, stone), stone)
         for index, column in enumerate(columns):
-            column.append( Stone("#", PLATFORM_SIZE + 1, index + 1, self))
-            column.insert(0, Stone("#", -1, index + 1, self))
+            column.append(Stone("#", PLATFORM_SIZE + 1, index + 1, self))
+            column.insert(0, Stone("#", 0, index + 1, self))
         return columns
 
     def _build_rows(self):
-        self.column_mode = True
+        self.column_mode = False
         rows = [[] for _ in range(PLATFORM_SIZE)]
         for stone in self.cubic_stones:
             row = rows[stone.row_index - 1]
             row.insert(bisect(row, stone), stone)
         for index, row in enumerate(rows):
-            row.append(Stone("#", index + 1, -1, self))
-            row.insert(0, Stone("#", index + 1, PLATFORM_SIZE + 1, self))
+            row.append(Stone("#", index + 1, PLATFORM_SIZE + 1, self))
+            row.insert(0, Stone("#", index + 1, 0, self))
         return rows
+
+    def __repr__(self):
+        map = []
+        for row in range(PLATFORM_SIZE):
+            row = []
+            for column in range(PLATFORM_SIZE):
+                row.append(".")
+            map.append(row)
+
+        for stone in self.rounded_stones:
+            map[PLATFORM_SIZE - stone.row_index][
+                PLATFORM_SIZE - stone.column_index
+            ] = stone.shape
+        for stone in self.cubic_stones:
+            map[PLATFORM_SIZE - stone.row_index][
+                PLATFORM_SIZE - stone.column_index
+            ] = stone.shape
+
+        return "\n".join(["".join(row) for row in map])
 
 
 class Stone:
