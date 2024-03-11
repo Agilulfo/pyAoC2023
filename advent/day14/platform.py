@@ -1,9 +1,8 @@
-from collections import defaultdict
+from collections import defaultdict, Counter
 from bisect import bisect
 
 PLATFORM_SIZE = 100
 NUMBER_OF_CYCLES = 1000000000
-
 
 class Platform:
     def __init__(self, platform):
@@ -80,10 +79,26 @@ class Platform:
         for direction in ("N", "W", "S", "E"):
             self.tilt(direction)
 
-    def spin(self, n):
-        for time in range(n):
-            print(f"spin: {time}")
+    def spin_and_weight(self, n):
+        weights = defaultdict(list)
+        history = []
+        for iteration in range(1000):
             self.spin_cycle()
+            current_weight = self.get_weight()
+            weights[current_weight].append(iteration + 1)
+            history.append(current_weight)
+
+        periods = []
+        for occurrences in weights.values():
+            if len(occurrences) > 2:
+                periods.append(occurrences[-1] - occurrences[-2])
+
+        c = Counter(periods)
+        period, _= c.most_common()[0]
+        sequence = history[- period:]
+        remaining_iterations = n - 1000
+        prediction_index = remaining_iterations % period
+        return sequence[prediction_index - 1]
 
     def get_weight(self):
         return sum([stone.get_weight() for stone in self.rounded_stones])
