@@ -4,6 +4,7 @@ from bisect import bisect
 PLATFORM_SIZE = 100
 NUMBER_OF_CYCLES = 1000000000
 
+
 class Platform:
     def __init__(self, platform):
         self.rounded_stones = []
@@ -94,8 +95,8 @@ class Platform:
                 periods.append(occurrences[-1] - occurrences[-2])
 
         c = Counter(periods)
-        period, _= c.most_common()[0]
-        sequence = history[- period:]
+        period, _ = c.most_common()[0]
+        sequence = history[-period:]
         remaining_iterations = n - 1000
         prediction_index = remaining_iterations % period
         return sequence[prediction_index - 1]

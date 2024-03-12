@@ -1,4 +1,6 @@
 from advent.utils import input_path
+from advent.day15.hash import hash
+
 
 def main():
     with open(input_path(__file__)) as input:
@@ -6,9 +8,3 @@ def main():
 
     hashes = [hash(instruction) for instruction in instructions]
     print(f"hash sum is: {sum(hashes)}")
-
-def hash(word):
-    hash = 0
-    for character in word:
-        hash = (hash + ord(character)) * 17 % 256
-    return hash
