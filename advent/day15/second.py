@@ -8,9 +8,10 @@ def main():
         instructions = input.readline()[:-1].split(",")
 
     hashmap = Initiation(instructions)
-    hashmap.run()
+    print(f"focusing power is : {hashmap.run()}")
 
-#HASHMAP
+
+# HASHMAP
 class Initiation:
     def __init__(self, instructions):
         self.instructions = instructions
@@ -22,9 +23,7 @@ class Initiation:
             box = self.boxes[op.box_id]
             box.tweak(op)
 
-        import pprint
-        for box in self.boxes:
-            pprint.pprint(box)
+        return sum([box.focal_power() for box in self.boxes])
 
 
 class Operation:
@@ -39,7 +38,7 @@ class Operation:
 
     @cached_property
     def box_id(self):
-        return custom_hash(self.instruction)
+        return custom_hash(self.lens_id)
 
 
 class Box:
@@ -52,34 +51,46 @@ class Box:
         match operation.action:
             case "-":
                 self.remove_lens(operation.lens_id)
-            case ("=", focal_length) :
+            case ("=", focal_length):
                 self.add_lens(Lens(operation.lens_id, focal_length))
 
     def add_lens(self, lens):
         if lens.lens_id in self.lens_set:
+            for index, existing_lens in enumerate(self.lens_list):
+                if lens.lens_id == existing_lens.lens_id:
+                    existing_lens.focal_length = lens.focal_length
+                    break
             return
         self.lens_list.append(lens)
         self.lens_set.add(lens.lens_id)
 
     def remove_lens(self, lens_id):
-        if not lens_id in self.lens_set:
+        if lens_id not in self.lens_set:
             return
-        for index, lens in self.lens_list:
+        for index, lens in enumerate(self.lens_list):
             if lens.lens_id == lens_id:
                 self.lens_list.pop(index)
                 break
         self.lens_set.remove(lens_id)
 
+    def focal_power(self):
+        focal_power = 0
+        for slot, lens in enumerate(self.lens_list):
+            # import ipdb; ipdb.set_trace()
+            focal_power += (1 + self.index) * (slot + 1) * lens.focal_length
+        return focal_power
+
     def __repr__(self):
-        return f"Box {self.index} - {self.lens_list}"
+        return f"Box {self.index}: {self.lens_list}"
+
 
 class Lens:
     def __init__(self, lens_id, focal_length):
         self.lens_id = lens_id
-        self.focal_length = focal_length
+        self.focal_length = int(focal_length)
 
     def __hash__(self):
         return hash(self.lens_id)
 
     def __repr__(self):
-        return f"{self.lens_id}, {self.focal_length}"
+        return f"[{self.lens_id}, {self.focal_length}]"
