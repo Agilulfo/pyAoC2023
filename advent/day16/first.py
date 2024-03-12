@@ -1,6 +1,7 @@
 from advent.day10.parsing import load_map
 from advent.day16.contraption import Contraption
 
+
 def main():
     map = load_map(__file__)
     contraption = Contraption(map)

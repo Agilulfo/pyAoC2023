@@ -1,5 +1,6 @@
 import sys
 
+
 class Contraption:
     def __init__(self, field):
         self.field = field
@@ -8,11 +9,11 @@ class Contraption:
                 self.field[row_index][column_index] = Tile(
                     tile, row_index, column_index
                 )
-
-    def energize(self):
         limit = len(self.field) * len(self.field[0])
         sys.setrecursionlimit(limit)
-        self.beam_hit("E", self.field[0][0])
+
+    def energize(self, direction="E", row_index=0, column_index=0):
+        self.beam_hit(direction, self.field[row_index][column_index])
 
     def beam_hit(self, direction, tile):
         propagations = [
@@ -50,6 +51,7 @@ class Contraption:
             for tile in row:
                 if tile.energized:
                     counter += 1
+                    tile.reset()
         return counter
 
     def __repr__(self):
@@ -78,6 +80,10 @@ class Tile:
         self.gates.discard(entrance_gate)
         self.gates.difference_update(exit_gates)
         return exit_gates
+
+    def reset(self):
+        self.energized = False
+        self.gates = set(["N", "W", "S", "E"])
 
     def propagation_gates(self, beam_direction):
         match self.content:
