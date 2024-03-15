@@ -7,5 +7,5 @@ def main():
     arrangements = 0
 
     for a, b in records:
-        arrangements += count_arrangements(a, tuple(b))
+        arrangements += count_arrangements(f"{a}?{a}?{a}?{a}?{a}", tuple(b * 5))
     print(f"Total number of arrangements is {arrangements}")
