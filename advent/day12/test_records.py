@@ -1,4 +1,3 @@
-import pytest
 from advent.day12.records import count_fits, count_arrangements
 
 
