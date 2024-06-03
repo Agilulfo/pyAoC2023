@@ -1,5 +1,4 @@
-from advent import utils
-
+from advent.day18.parsing import parse_input
 from PIL import Image, ImageDraw
 
 # after inspecting the input I've found out that
@@ -76,18 +75,6 @@ def main():
 
     # for debugging purporse
     # img.save("test.png")
-
-
-def parse_input():
-    with open(utils.input_path(__file__)) as input:
-        return [unpack_line(line) for line in input]
-
-
-def unpack_line(line):
-    direction, distance, color = line.split(" ")
-    distance = int(distance)
-    color = color[2:-2]
-    return (direction, distance, color)
 
 
 class Point:
