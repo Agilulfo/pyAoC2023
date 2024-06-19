@@ -4,12 +4,13 @@ from advent.day18.parsing import parse_input
 def main():
     instructions = [decode(instruction) for instruction in parse_input()]
 
-    loop = Loop(instructions)
+    lake = Lake(instructions)
     # import ipdb; ipdb.set_trace()
 
-    print(f"The lake area is: {loop.calculate_area()}")
+    print(f"The lake area is: {lake.calculate_area()}")
 
 
+# we can replace the decode function to test the algorithm on the smaller graph
 def decode(instruction):
     _, _, code = instruction
     distance = int(code[:-1], 16)
@@ -25,12 +26,16 @@ def decode(instruction):
     return (distance, direction)
 
 
-class Loop:
+class Lake:
     def __init__(self, instructions):
-        cursor = Edge((0, 0), instructions[0])
+        distance, direction = instructions[0]
+        cursor = Edge((0, 0), distance, direction)
+        self.edge_count = 0
         for instruction in instructions[1:]:
+            self.edge_count += 1
             next_position = cursor.end()
-            cursor.insert_after(Edge(next_position, instruction))
+            distance, direction = instruction
+            cursor.insert_after(Edge(next_position, distance, direction))
             cursor = cursor.next
 
         self.cursor = cursor.next
@@ -51,12 +56,47 @@ class Loop:
 
     def calculate_area(self):
         return 10
+def translate_point(position, direction, distance):
+    x, y = position
+    match direction:
+        case "U":
+            return (x, y + distance)
+        case "D":
+            return (x, y - distance)
+        case "R":
+            return (x + distance, y)
+        case "L":
+            return (x - distance, y)
+
+
+def distance(point_a, point_b):
+    ax, ay = point_a
+    bx, by = point_b
+    if ax == bx:
+        return abs(ay - by)
+    elif ay == by:
+        return abs(ax - bx)
+    else:
+        raise RuntimeError("invalid distance calculation attempt")
+
+
+def opposite_direction(direction):
+    match direction:
+        case "U":
+            return "D"
+        case "D":
+            return "U"
+        case "R":
+            return "L"
+        case "L":
+            return "R"
 
 
 class Edge:
-    def __init__(self, position, instruction):
+    def __init__(self, position, distance, direction):
         self.x, self.y = position
-        self.distance, self.direction = instruction
+        self.distance = distance
+        self.direction = direction
         self.next = self
         self.prev = self
 
@@ -68,16 +108,15 @@ class Edge:
         self.next = other_edge
         former_next.prev = other_edge
 
+    def remove(self):
+        self.prev.next = self.next
+        self.next.prev = self.prev
+
+    def start(self):
+        return (self.x, self.y)
+
     def end(self):
-        match self.direction:
-            case "U":
-                return (self.x, self.y + self.distance)
-            case "D":
-                return (self.x, self.y - self.distance)
-            case "R":
-                return (self.x + self.distance, self.y)
-            case "L":
-                return (self.x - self.distance, self.y)
+        return translate_point(self.start(), self.direction, self.distance)
 
     def cw_segment(self):
         sequence = (self.direction, self.next.direction)
@@ -98,6 +137,12 @@ class Edge:
                 return True
             case ("R", "U"):
                 return False
+
+    def is_buldge(self, cw):
+        return cw == self.cw_segment() and cw == self.prev.cw_segment()
+
+    def __lt__(self, other):
+        return self.distance < other.distance
 
     def __repr__(self):
         return f"Edge: {self.x}, {self.y} - {self.direction} {self.distance}"
