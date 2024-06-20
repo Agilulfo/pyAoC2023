@@ -21,9 +21,11 @@ def decode(instruction):
             direction = "U"
     return (distance, direction)
 
+
 def decode_wrongly(instruction):
     direction, distance, _ = instruction
     return (distance, direction)
+
 
 class Lake:
     def __init__(self, instructions):
@@ -34,7 +36,9 @@ class Lake:
             self.edge_count += 1
             next_position = cursor.end()
             distance, direction = instruction
-            cursor.insert_after(Edge(next_position, distance, direction, self, self.edge_count))
+            cursor.insert_after(
+                Edge(next_position, distance, direction, self, self.edge_count)
+            )
             cursor = cursor.next
 
         self.cursor = cursor.next
@@ -73,7 +77,6 @@ class Lake:
             edge.shift_start(chop_direction, chop_distance)
             edge.next.shift_start(chop_direction, chop_distance)
 
-
             if (
                 edge.direction == edge.prev.direction
                 or edge.direction == opposite_direction(edge.prev.direction)
@@ -91,8 +94,6 @@ class Lake:
             ):
                 edge.shift_end(edge.next.direction, edge.next.distance)
                 edge.next.shift_start(edge.next.direction, edge.next.distance)
-
-
 
         return area + (self.cursor.distance + 1) * (self.cursor.next.distance + 1)
 
