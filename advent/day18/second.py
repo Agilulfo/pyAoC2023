@@ -75,12 +75,36 @@ class Lake:
             chop_direction = opposite_direction(edge.prev.direction)
 
             area += (edge.distance + 1) * chop_distance
-            edge.prev.shift(chop_direction, chop_distance)
-            edge.shift(chop_direction, chop_distance)
-            edge.next.shift(chop_direction, chop_distance)
+            edge.prev.shift_end(chop_direction, chop_distance)
+            edge.shift_start(chop_direction, chop_distance)
+            edge.next.shift_start(chop_direction, chop_distance)
 
-            # TODO: adjust edgest that now might have the same direction
+            print("---post move---")
+            print(edge.prev.prev)
+            print(edge.prev)
+            print(edge)
+            print(edge.next)
+            print(edge.next.next)
 
+            if (
+                edge.direction == edge.prev.direction
+                or edge.direction == opposite_direction(edge.prev.direction)
+            ):
+                edge.shift_start(
+                    opposite_direction(edge.prev.direction), edge.prev.distance
+                )
+                edge.prev.shift_end(
+                    opposite_direction(edge.prev.direction), edge.prev.distance
+                )
+
+            if (
+                edge.direction == edge.next.direction
+                or edge.direction == opposite_direction(edge.next.direction)
+            ):
+                edge.shift_end(edge.next.direction, edge.next.distance)
+                edge.next.shift_start(edge.next.direction, edge.next.distance)
+
+            print("---post fix---")
             print(edge.prev.prev)
             print(edge.prev)
             print(edge)
@@ -171,14 +195,24 @@ class Edge:
     def end(self):
         return translate_point(self.start(), self.direction, self.distance)
 
-    def shift(self, direction, distance):
+    def shift_start(self, direction, distance):
+        self.x, self.y = translate_point(self.start(), direction, distance)
         if direction == self.direction:
-            self.x, self.y = translate_point(self.start(), direction, distance)
             self.distance = self.distance - distance
+        elif direction == opposite_direction(self.direction):
+            self.distance = self.distance + distance
+        self.significance_check()
+
+    def shift_end(self, direction, distance):
+        if direction == self.direction:
+            self.distance = self.distance + distance
         elif direction == opposite_direction(self.direction):
             self.distance = self.distance - distance
         else:
             self.x, self.y = translate_point(self.start(), direction, distance)
+        self.significance_check()
+
+    def significance_check(self):
         if self.distance == 0:
             self.remove()
 
