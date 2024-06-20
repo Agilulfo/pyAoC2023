@@ -126,17 +126,6 @@ def translate_point(position, direction, distance):
             return (x - distance, y)
 
 
-def distance(point_a, point_b):
-    ax, ay = point_a
-    bx, by = point_b
-    if ax == bx:
-        return abs(ay - by)
-    elif ay == by:
-        return abs(ax - bx)
-    else:
-        raise RuntimeError("invalid distance calculation attempt")
-
-
 def opposite_direction(direction):
     match direction:
         case "U":
