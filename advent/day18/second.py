@@ -2,15 +2,11 @@ from advent.day18.parsing import parse_input
 
 
 def main():
-    instructions = [decode(instruction) for instruction in parse_input()]
-
+    instructions = [decode_wrongly(instruction) for instruction in parse_input()]
     lake = Lake(instructions)
-    # import ipdb; ipdb.set_trace()
-
     print(f"The lake area is: {lake.calculate_area()}")
 
 
-# we can replace the decode function to test the algorithm on the smaller graph
 def decode(instruction):
     _, _, code = instruction
     distance = int(code[:-1], 16)
@@ -25,17 +21,20 @@ def decode(instruction):
             direction = "U"
     return (distance, direction)
 
+def decode_wrongly(instruction):
+    direction, distance, _ = instruction
+    return (distance, direction)
 
 class Lake:
     def __init__(self, instructions):
         distance, direction = instructions[0]
-        cursor = Edge((0, 0), distance, direction, self)
-        self.edge_count = 0
+        cursor = Edge((0, 0), distance, direction, self, 1)
+        self.edge_count = 1
         for instruction in instructions[1:]:
             self.edge_count += 1
             next_position = cursor.end()
             distance, direction = instruction
-            cursor.insert_after(Edge(next_position, distance, direction, self))
+            cursor.insert_after(Edge(next_position, distance, direction, self, self.edge_count))
             cursor = cursor.next
 
         self.cursor = cursor.next
@@ -65,26 +64,15 @@ class Lake:
         while self.edge_count > 4:
             edge = self.pick_chop_edge()
 
-            print(edge.prev.prev)
-            print(edge.prev)
-            print(edge)
-            print(edge.next)
-            print(edge.next.next)
-
             chop_distance = min(edge.prev.distance, edge.next.distance)
             chop_direction = opposite_direction(edge.prev.direction)
 
-            area += (edge.distance + 1) * chop_distance
+            area_increment = (edge.distance + 1) * chop_distance
+            area += area_increment
             edge.prev.shift_end(chop_direction, chop_distance)
             edge.shift_start(chop_direction, chop_distance)
             edge.next.shift_start(chop_direction, chop_distance)
 
-            print("---post move---")
-            print(edge.prev.prev)
-            print(edge.prev)
-            print(edge)
-            print(edge.next)
-            print(edge.next.next)
 
             if (
                 edge.direction == edge.prev.direction
@@ -104,14 +92,7 @@ class Lake:
                 edge.shift_end(edge.next.direction, edge.next.distance)
                 edge.next.shift_start(edge.next.direction, edge.next.distance)
 
-            print("---post fix---")
-            print(edge.prev.prev)
-            print(edge.prev)
-            print(edge)
-            print(edge.next)
-            print(edge.next.next)
 
-            raise RuntimeError("yo")
 
         return area + (self.cursor.distance + 1) * (self.cursor.next.distance + 1)
 
@@ -168,13 +149,14 @@ def opposite_direction(direction):
 
 
 class Edge:
-    def __init__(self, position, distance, direction, lake):
+    def __init__(self, position, distance, direction, lake, identifier):
         self.x, self.y = position
         self.distance = distance
         self.direction = direction
         self.next = self
         self.prev = self
         self.lake = lake
+        self.identifier = identifier
 
     def insert_after(self, other_edge):
         former_next = self.next
@@ -244,4 +226,4 @@ class Edge:
 
     def __repr__(self):
         end_x, end_y = self.end()
-        return f"Edge: {self.x}, {self.y} - {self.direction} {self.distance} - {end_x}, {end_y}"
+        return f"Edge #{self.identifier}: {self.x}, {self.y} - {self.direction} {self.distance} - {end_x}, {end_y}"
