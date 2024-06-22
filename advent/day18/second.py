@@ -2,7 +2,7 @@ from advent.day18.parsing import parse_input
 
 
 def main():
-    instructions = [decode_wrongly(instruction) for instruction in parse_input()]
+    instructions = [decode(instruction) for instruction in parse_input()]
     lake = Lake(instructions)
     print(f"The lake area is: {lake.calculate_area()}")
 
@@ -19,11 +19,6 @@ def decode(instruction):
             direction = "L"
         case "3":
             direction = "U"
-    return (distance, direction)
-
-
-def decode_wrongly(instruction):
-    direction, distance, _ = instruction
     return (distance, direction)
 
 
@@ -81,6 +76,7 @@ class Lake:
                 edge.direction == edge.prev.direction
                 or edge.direction == opposite_direction(edge.prev.direction)
             ):
+                initial_edge_len = edge.distance
                 edge.shift_start(
                     opposite_direction(edge.prev.direction), edge.prev.distance
                 )
@@ -88,12 +84,18 @@ class Lake:
                     opposite_direction(edge.prev.direction), edge.prev.distance
                 )
 
+                final_edge_len = edge.distance
+                area += max(0, initial_edge_len - final_edge_len)
+
             if (
                 edge.direction == edge.next.direction
                 or edge.direction == opposite_direction(edge.next.direction)
             ):
+                initial_edge_len = edge.distance
                 edge.shift_end(edge.next.direction, edge.next.distance)
                 edge.next.shift_start(edge.next.direction, edge.next.distance)
+                final_edge_len = edge.distance
+                area += max(0, initial_edge_len - final_edge_len)
 
         return area + (self.cursor.distance + 1) * (self.cursor.next.distance + 1)
 
