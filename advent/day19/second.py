@@ -65,6 +65,7 @@ class Rule:
                 pc_b.destination = None
         return [pc for pc in [pc_a, pc_b] if pc.is_valid()]
 
+
 class Workflow:
     def __init__(self, name, rules, default):
         self.name = name
